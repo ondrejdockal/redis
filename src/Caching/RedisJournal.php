@@ -112,6 +112,24 @@ final class RedisJournal implements Journal
 	}
 
 	/**
+	 * Cleans entries from journal.
+	 *
+	 * @param mixed[] $tags
+	 * @return mixed[] of removed items or NULL when performing a full cleanup
+	 */
+	public function loadByTags(array $tags): ?array
+	{
+		$entries = [];
+		foreach ($tags as $tag) {
+			$entries[] = $this->tagEntries($tag);
+		}
+
+		$entries = array_merge(...$entries);
+
+		return array_unique($entries);
+	}
+
+	/**
 	 * @param int $priority
 	 * @return mixed[]
 	 */

@@ -75,6 +75,24 @@ final class RedisStorage implements Storage
 	}
 
 	/**
+	 * Read from cache.
+	 *
+	 * @param string $key
+	 * @return mixed|null
+	 */
+	public function readByTags(array $tags)
+	{
+		$entries = $this->journal->loadByTags($tags);
+		if ($entries === null || count($entries) === 0) {
+			return null;
+		}
+
+		return array_map(function ($key) {
+			return $this->getUnserializedValue(self::processStoredValue('', $this->client->get($key)));
+		}, $this->journal->loadByTags($tags));
+	}
+
+	/**
 	 * Removes item from the cache.
 	 *
 	 * @param string $key
